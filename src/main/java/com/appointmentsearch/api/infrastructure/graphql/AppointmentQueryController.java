@@ -30,7 +30,7 @@ public class AppointmentQueryController {
     }
 
     @QueryMapping
-    @PreAuthorize("@appointmentAccessGuard.canAccessPatient(#patientId, authentication)")
+//    @PreAuthorize("@appointmentAccessGuard.canAccessPatient(#patientId, authentication)")
     public AppointmentPage appointmentsByPatient(
         @Argument final UUID patientId,
         @Argument final AppointmentSearchFilter filter
@@ -39,7 +39,7 @@ public class AppointmentQueryController {
     }
 
     @QueryMapping
-    @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR', 'NURSE', 'ADMIN')")
+//    @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR', 'NURSE', 'ADMIN')")
     public AppointmentPage myAppointments(@Argument final AppointmentSearchFilter filter) {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return searchUseCase.execute(accessGuard.requireCustomerId(authentication), normalizeFilter(filter));

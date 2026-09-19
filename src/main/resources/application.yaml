@@ -3,10 +3,6 @@ spring:
     name: appointment-search-service
   profiles:
     default: api
-  data:
-    mongodb:
-      uri: ${SPRING_DATA_MONGODB_URI:mongodb://root:root@localhost:27017/appointment_search?authSource=admin}
-      database: ${SPRING_DATA_MONGODB_DATABASE:appointment_search}
   kafka:
     bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     consumer:
@@ -14,6 +10,8 @@ spring:
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  mongodb:
+    uri: ${SPRING_DATA_MONGODB_URI:mongodb://root:root@localhost:27017/appointment_search?authSource=admin}
 app:
   kafka:
     topics:
@@ -21,8 +19,8 @@ app:
 
 management:
   health:
-    mongo:
-      enabled: false
+    mongodb:
+      enabled: true
   endpoints:
     web:
       exposure:
