@@ -1,6 +1,6 @@
 package com.appointmentsearch.api.infrastructure.persistence.repository;
 
-import com.appointmentsearch.api.infrastructure.persistence.document.AppointmentProjectionDocument;
+import com.appointmentsearch.api.infrastructure.persistence.document.AppointmentDocument;
 import com.appointmentsearch.api.domain.model.AppointmentStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -16,16 +16,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class AppointmentProjectionRepositoryImpl implements AppointmentProjectionRepositoryCustom {
+public class AppointmentRepositoryImpl implements AppointmentRepositoryCustom {
 
     private final MongoTemplate mongoTemplate;
 
-    public AppointmentProjectionRepositoryImpl(final MongoTemplate mongoTemplate) {
+    public AppointmentRepositoryImpl(final MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
 
     @Override
-    public Page<AppointmentProjectionDocument> search(
+    public Page<AppointmentDocument> search(
         final UUID patientId,
         final OffsetDateTime from,
         final OffsetDateTime to,
@@ -45,14 +45,14 @@ public class AppointmentProjectionRepositoryImpl implements AppointmentProjectio
         }
 
         final Query countQuery = buildQuery(criteria);
-        final long total = mongoTemplate.count(countQuery, AppointmentProjectionDocument.class);
+        final long total = mongoTemplate.count(countQuery, AppointmentDocument.class);
 
         final Query pageQuery = buildQuery(criteria).with(pageable);
         if (pageable.getSort().isUnsorted()) {
             pageQuery.with(Sort.by(Sort.Direction.DESC, "appointmentDateTime"));
         }
 
-        final List<AppointmentProjectionDocument> content = mongoTemplate.find(pageQuery, AppointmentProjectionDocument.class);
+        final List<AppointmentDocument> content = mongoTemplate.find(pageQuery, AppointmentDocument.class);
         return new PageImpl<>(content, pageable, total);
     }
 

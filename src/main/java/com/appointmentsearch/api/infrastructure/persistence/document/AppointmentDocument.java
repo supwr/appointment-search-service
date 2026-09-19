@@ -10,7 +10,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Document("appointments")
-public class AppointmentProjectionDocument {
+public class AppointmentDocument {
 
     @Id
     private String id;
@@ -35,10 +35,10 @@ public class AppointmentProjectionDocument {
     private Instant createdAt;
     private Instant updatedAt;
 
-    public AppointmentProjectionDocument() {
+    public AppointmentDocument() {
     }
 
-    public AppointmentProjectionDocument(
+    public AppointmentDocument(
         final String id,
         final UUID appointmentId,
         final UUID patientId,

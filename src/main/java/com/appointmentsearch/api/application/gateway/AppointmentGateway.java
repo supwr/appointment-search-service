@@ -6,12 +6,10 @@ import com.appointmentsearch.api.domain.model.ScheduledAppointment;
 
 import java.util.UUID;
 
-public interface AppointmentProjectionGateway {
+public interface AppointmentGateway {
     void save(ScheduledAppointment appointment);
 
     boolean isProcessed(String idempotencyKey);
-
-    void markProcessed(String idempotencyKey, String eventId);
 
     AppointmentPage searchByPatient(UUID patientId, AppointmentSearchFilter filter);
 }

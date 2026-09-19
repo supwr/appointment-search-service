@@ -1,7 +1,8 @@
-package com.appointmentsearch.api.infrastructure.messaging;
+package com.appointmentsearch.api.infrastructure.messaging.consumer;
 
 import com.appointmentsearch.api.application.dto.event.AppointmentScheduledEvent;
-import com.appointmentsearch.api.application.usecase.AppointmentIngestionUseCase;
+import com.appointmentsearch.api.application.usecase.create.CreateAppointmentUseCase;
+import com.appointmentsearch.api.application.gateway.AppointmentGateway;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
@@ -22,20 +23,29 @@ public class AppointmentScheduledConsumer {
     private static final Logger logger = LoggerFactory.getLogger(AppointmentScheduledConsumer.class);
 
     private final ObjectMapper objectMapper;
-    private final AppointmentIngestionUseCase ingestionUseCase;
+    private final CreateAppointmentUseCase ingestionUseCase;
+    private final com.appointmentsearch.api.application.gateway.AppointmentGateway appointmentGateway;
 
     public AppointmentScheduledConsumer(
         final ObjectMapper objectMapper,
-        final AppointmentIngestionUseCase ingestionUseCase
+        final CreateAppointmentUseCase ingestionUseCase,
+        final com.appointmentsearch.api.application.gateway.AppointmentGateway appointmentGateway
     ) {
         this.objectMapper = objectMapper;
         this.ingestionUseCase = ingestionUseCase;
+        this.appointmentGateway = appointmentGateway;
     }
 
     @KafkaListener(topics = "${app.kafka.topics.appointment-scheduled}", groupId = "${spring.kafka.consumer.group-id}")
     public void listen(final ConsumerRecord<String, String> record) throws IOException {
         final AppointmentScheduledEvent event = objectMapper.readValue(record.value(), AppointmentScheduledEvent.class);
-        ingestionUseCase.execute(normalizeEvent(record.headers(), event));
+        final AppointmentScheduledEvent normalized = normalizeEvent(record.headers(), event);
+        final String idempotencyKey = resolveIdempotencyKey(normalized);
+        if (appointmentGateway.isProcessed(idempotencyKey)) {
+            logger.info("Idempotency key {} already processed; acking", idempotencyKey);
+            return;
+        }
+        ingestionUseCase.execute(normalized);
     }
 
     private AppointmentScheduledEvent normalizeEvent(
@@ -59,5 +69,15 @@ public class AppointmentScheduledConsumer {
     private String headerAsString(final Headers headers, final String key) {
         final Header header = headers.lastHeader(key);
         return header == null ? null : new String(header.value(), StandardCharsets.UTF_8);
+    }
+
+    private String resolveIdempotencyKey(final AppointmentScheduledEvent event) {
+        if (event.idempotencyKey() != null && !event.idempotencyKey().isBlank()) {
+            return event.idempotencyKey();
+        }
+        if (event.eventId() != null && !event.eventId().isBlank()) {
+            return event.eventId();
+        }
+        throw new IllegalArgumentException("Appointment scheduled event must include idempotencyKey or eventId");
     }
 }

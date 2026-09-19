@@ -1,7 +1,8 @@
 package com.appointmentsearch.api.infrastructure.persistence.repository;
 
-import com.appointmentsearch.api.infrastructure.persistence.document.ProcessedEventDocument;
-import org.springframework.data.mongodb.repository.MongoRepository;
-
-public interface ProcessedEventRepository extends MongoRepository<ProcessedEventDocument, String> {
+/**
+ * Deprecated. ProcessedEventRepository removed — idempotency is now derived from appointment projections.
+ * Kept as placeholder for migration; remove this file when safe.
+ */
+public interface ProcessedEventRepository {
 }
