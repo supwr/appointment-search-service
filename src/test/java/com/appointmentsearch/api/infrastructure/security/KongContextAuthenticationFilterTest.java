@@ -24,7 +24,6 @@ class KongContextAuthenticationFilterTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("X-User-Roles", "PATIENT");
         request.addHeader("X-User-ID", UUID.randomUUID());
-        request.addHeader("X-Customer-ID", UUID.randomUUID());
 
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final FilterChain filterChain = mock(FilterChain.class);

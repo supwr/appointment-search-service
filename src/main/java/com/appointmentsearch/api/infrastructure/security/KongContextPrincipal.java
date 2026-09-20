@@ -5,7 +5,6 @@ import java.util.UUID;
 
 public record KongContextPrincipal(
     UUID userId,
-    UUID customerId,
     Set<String> roles
 ) {
 }

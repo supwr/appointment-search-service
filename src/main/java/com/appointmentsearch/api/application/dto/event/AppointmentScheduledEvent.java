@@ -6,10 +6,12 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record AppointmentScheduledEvent(
+    AppointmentEventType type,
     UUID appointmentId,
     UUID patientId,
     UUID doctorId,
@@ -23,6 +25,7 @@ public record AppointmentScheduledEvent(
     String email
 ) {
     public AppointmentScheduledEvent {
+        type = Objects.requireNonNull(type, "type must not be null");
         status = status == null ? AppointmentStatus.SCHEDULED : status;
     }
 }

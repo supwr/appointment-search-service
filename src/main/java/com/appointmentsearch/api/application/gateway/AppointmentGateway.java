@@ -9,6 +9,8 @@ import java.util.UUID;
 public interface AppointmentGateway {
     void save(ScheduledAppointment appointment);
 
+    void deleteByAppointmentId(UUID appointmentId);
+
     boolean isProcessed(String idempotencyKey);
 
     AppointmentPage searchByPatient(UUID patientId, AppointmentSearchFilter filter);

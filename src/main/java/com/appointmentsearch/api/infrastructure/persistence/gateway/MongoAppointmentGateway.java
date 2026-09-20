@@ -30,6 +30,11 @@ public class MongoAppointmentGateway implements AppointmentGateway {
     }
 
     @Override
+    public void deleteByAppointmentId(final UUID appointmentId) {
+        appointmentRepository.deleteById(appointmentId.toString());
+    }
+
+    @Override
     public boolean isProcessed(final String idempotencyKey) {
         return appointmentRepository.existsByIdempotencyKey(idempotencyKey);
     }

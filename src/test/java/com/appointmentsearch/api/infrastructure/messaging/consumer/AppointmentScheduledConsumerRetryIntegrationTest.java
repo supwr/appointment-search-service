@@ -28,12 +28,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.header.internals.RecordHeader;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @SpringBootTest(properties = {
     "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration,org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration",
@@ -57,6 +59,7 @@ class AppointmentScheduledConsumerRetryIntegrationTest {
     static final String DLQ_TOPIC = MAIN_TOPIC + "-dlq";
     private static final String PAYLOAD = """
         {
+          "type": "SCHEDULED",
           "appointmentId": "4f264ceb-5f90-4c3f-8afd-345c0c680368",
           "patientId": "fff5d5cb-7ca6-4ec9-b429-4c5b90bc4289",
           "doctorId": "4d1c9baf-da93-4b36-ba45-555beef6badd",
@@ -90,10 +93,9 @@ class AppointmentScheduledConsumerRetryIntegrationTest {
         doThrow(new IllegalStateException("boom-1"))
             .doThrow(new IllegalStateException("boom-2"))
             .doThrow(new IllegalStateException("boom-3"))
-            .doNothing()
             .when(ingestionUseCase).execute(any());
 
-        kafkaTemplate.send(MAIN_TOPIC, PAYLOAD).get(10, TimeUnit.SECONDS);
+        kafkaTemplate.send(recordWithHeaders(PAYLOAD)).get(10, TimeUnit.SECONDS);
 
         verify(ingestionUseCase, timeout(15_000).times(4)).execute(any());
         verify(appointmentGateway, timeout(15_000).atLeast(4)).isProcessed("idempotency-99");
@@ -104,7 +106,7 @@ class AppointmentScheduledConsumerRetryIntegrationTest {
         doThrow(new IllegalStateException("boom"))
             .when(ingestionUseCase).execute(any());
 
-        kafkaTemplate.send(MAIN_TOPIC, PAYLOAD).get(10, TimeUnit.SECONDS);
+        kafkaTemplate.send(recordWithHeaders(PAYLOAD)).get(10, TimeUnit.SECONDS);
 
         verify(ingestionUseCase, timeout(15_000).times(4)).execute(any());
 
@@ -125,6 +127,13 @@ class AppointmentScheduledConsumerRetryIntegrationTest {
         );
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new StringDeserializer()).createConsumer();
+    }
+
+    private ProducerRecord<String, String> recordWithHeaders(final String payload) {
+        final ProducerRecord<String, String> record = new ProducerRecord<>(MAIN_TOPIC, null, payload);
+        record.headers().add(new RecordHeader("X-Idempotency-Key", "idempotency-99".getBytes(UTF_8)));
+        record.headers().add(new RecordHeader("X-Source-Service", "scheduling-service".getBytes(UTF_8)));
+        return record;
     }
 
     @TestConfiguration

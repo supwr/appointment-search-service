@@ -42,7 +42,7 @@ public class AppointmentQueryController {
     @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR', 'NURSE', 'ADMIN')")
     public AppointmentPage myAppointments(@Argument final AppointmentSearchFilter filter) {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return searchUseCase.execute(accessGuard.requireCustomerId(authentication), normalizeFilter(filter));
+        return searchUseCase.execute(accessGuard.requireUserId(authentication), normalizeFilter(filter));
     }
 
     private AppointmentSearchFilter normalizeFilter(final AppointmentSearchFilter filter) {

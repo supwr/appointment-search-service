@@ -27,35 +27,24 @@ class AppointmentAccessGuardTest {
 
     @Test
     void shouldAllowPatientToAccessOwnDataOnly() {
-        final UUID customerId = UUID.randomUUID();
-        final var authentication = authentication("PATIENT", customerId);
+        final UUID userId = UUID.randomUUID();
+        final var authentication = authentication("PATIENT", userId);
 
-        assertTrue(guard.canAccessPatient(customerId, authentication));
+        assertTrue(guard.canAccessPatient(userId, authentication));
         assertFalse(guard.canAccessPatient(UUID.randomUUID(), authentication));
     }
 
     @Test
-    void shouldRequireCustomerId() {
-        final UUID customerId = UUID.randomUUID();
-        final var authentication = authentication("PATIENT", customerId);
+    void shouldRequireUserId() {
+        final UUID userId = UUID.randomUUID();
+        final var authentication = authentication("PATIENT", userId);
 
-        assertEquals(customerId, guard.requireCustomerId(authentication));
+        assertEquals(userId, guard.requireUserId(authentication));
     }
 
-    @Test
-    void shouldRejectMissingCustomerId() {
-        final var authentication = UsernamePasswordAuthenticationToken.authenticated(
-            new KongContextPrincipal(UUID.randomUUID(), null, Set.of("PATIENT")),
-            null,
-            List.of(new SimpleGrantedAuthority("ROLE_PATIENT"))
-        );
-
-        assertThrows(AccessDeniedException.class, () -> guard.requireCustomerId(authentication));
-    }
-
-    private UsernamePasswordAuthenticationToken authentication(final String role, final UUID customerId) {
+    private UsernamePasswordAuthenticationToken authentication(final String role, final UUID userId) {
         return UsernamePasswordAuthenticationToken.authenticated(
-            new KongContextPrincipal(UUID.randomUUID(), customerId, Set.of(role)),
+            new KongContextPrincipal(userId, Set.of(role)),
             null,
             List.of(new SimpleGrantedAuthority("ROLE_" + role))
         );

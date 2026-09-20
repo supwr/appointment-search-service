@@ -25,7 +25,6 @@ public class KongContextAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String USER_ROLES_HEADER = "X-User-Roles";
     private static final String USER_ID_HEADER = "X-User-ID";
-    private static final String CUSTOMER_ID_HEADER = "X-Customer-ID";
 
     @Override
     protected void doFilterInternal(
@@ -36,9 +35,8 @@ public class KongContextAuthenticationFilter extends OncePerRequestFilter {
         final String rolesHeader = request.getHeader(USER_ROLES_HEADER);
         final Set<String> roles = parseRoles(rolesHeader);
         final UUID userId = parseUuidHeader(request.getHeader(USER_ID_HEADER));
-        final UUID customerId = parseUuidHeader(request.getHeader(CUSTOMER_ID_HEADER));
 
-        final KongContextPrincipal principal = new KongContextPrincipal(userId, customerId, roles);
+        final KongContextPrincipal principal = new KongContextPrincipal(userId, roles);
         final UsernamePasswordAuthenticationToken authentication = UsernamePasswordAuthenticationToken.authenticated(
             principal,
             null,

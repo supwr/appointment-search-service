@@ -1,8 +1,8 @@
 package com.appointmentsearch.api.infrastructure.messaging.consumer;
 
 import com.appointmentsearch.api.application.dto.event.AppointmentScheduledEvent;
-import com.appointmentsearch.api.application.usecase.create.CreateAppointmentUseCase;
 import com.appointmentsearch.api.application.gateway.AppointmentGateway;
+import com.appointmentsearch.api.application.usecase.create.CreateAppointmentUseCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
@@ -26,12 +26,12 @@ public class AppointmentScheduledConsumer {
 
     private final ObjectMapper objectMapper;
     private final CreateAppointmentUseCase ingestionUseCase;
-    private final com.appointmentsearch.api.application.gateway.AppointmentGateway appointmentGateway;
+    private final AppointmentGateway appointmentGateway;
 
     public AppointmentScheduledConsumer(
         final ObjectMapper objectMapper,
         final CreateAppointmentUseCase ingestionUseCase,
-        final com.appointmentsearch.api.application.gateway.AppointmentGateway appointmentGateway
+        final AppointmentGateway appointmentGateway
     ) {
         this.objectMapper = objectMapper;
         this.ingestionUseCase = ingestionUseCase;
@@ -60,34 +60,36 @@ public class AppointmentScheduledConsumer {
         final Headers headers,
         final AppointmentScheduledEvent event
     ) {
-        final String headerEventId = headerAsString(headers, "eventId");
-        final String headerIdempotencyKey = headerAsString(headers, "X-Idempotency-Key");
+        final String headerIdempotencyKey = requireHeader(headers, "X-Idempotency-Key");
+        requireHeader(headers, "X-Source-Service");
         return new AppointmentScheduledEvent(
+            event.type(),
             event.appointmentId(),
             event.patientId(),
             event.doctorId(),
             event.appointmentDateTime(),
             event.status(),
-            event.eventId() != null ? event.eventId() : headerEventId,
-            event.idempotencyKey() != null ? event.idempotencyKey() : headerIdempotencyKey,
+            event.eventId(),
+            headerIdempotencyKey,
             event.occurredAt(),
             event.fullname(),
             event.email()
         );
     }
 
-    private String headerAsString(final Headers headers, final String key) {
+    private String requireHeader(final Headers headers, final String key) {
         final Header header = headers.lastHeader(key);
-        return header == null ? null : new String(header.value(), StandardCharsets.UTF_8);
+        if (header == null || header.value() == null) {
+            throw new IllegalArgumentException("Appointment event must include header " + key);
+        }
+        final String value = new String(header.value(), StandardCharsets.UTF_8);
+        if (value.isBlank()) {
+            throw new IllegalArgumentException("Appointment event must include header " + key);
+        }
+        return value;
     }
 
     private String resolveIdempotencyKey(final AppointmentScheduledEvent event) {
-        if (event.idempotencyKey() != null && !event.idempotencyKey().isBlank()) {
-            return event.idempotencyKey();
-        }
-        if (event.eventId() != null && !event.eventId().isBlank()) {
-            return event.eventId();
-        }
-        throw new IllegalArgumentException("Appointment scheduled event must include idempotencyKey or eventId");
+        return event.idempotencyKey();
     }
 }

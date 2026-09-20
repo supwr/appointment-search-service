@@ -24,15 +24,15 @@ public class AppointmentAccessGuard {
         }
 
         final KongContextPrincipal principal = principal(authentication);
-        return hasRole(authentication, "PATIENT") && patientId.equals(principal.customerId());
+        return hasRole(authentication, "PATIENT") && patientId.equals(principal.userId());
     }
 
-    public UUID requireCustomerId(final Authentication authentication) {
+    public UUID requireUserId(final Authentication authentication) {
         final KongContextPrincipal principal = principal(authentication);
-        if (principal.customerId() == null) {
-            throw new AccessDeniedException("Missing X-Customer-ID header");
+        if (principal.userId() == null) {
+            throw new AccessDeniedException("Missing X-User-ID header");
         }
-        return principal.customerId();
+        return principal.userId();
     }
 
     private boolean hasAnyStaffRole(final Authentication authentication) {
