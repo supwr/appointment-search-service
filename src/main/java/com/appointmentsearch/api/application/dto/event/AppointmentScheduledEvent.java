@@ -18,7 +18,9 @@ public record AppointmentScheduledEvent(
     AppointmentStatus status,
     String eventId,
     String idempotencyKey,
-    Instant occurredAt
+    Instant occurredAt,
+    String fullname,
+    String email
 ) {
     public AppointmentScheduledEvent {
         status = status == null ? AppointmentStatus.SCHEDULED : status;

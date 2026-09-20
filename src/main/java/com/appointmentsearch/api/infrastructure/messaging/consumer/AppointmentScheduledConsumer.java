@@ -62,7 +62,9 @@ public class AppointmentScheduledConsumer {
             event.status(),
             event.eventId() != null ? event.eventId() : headerEventId,
             event.idempotencyKey() != null ? event.idempotencyKey() : headerIdempotencyKey,
-            event.occurredAt()
+            event.occurredAt(),
+            event.fullname(),
+            event.email()
         );
     }
 

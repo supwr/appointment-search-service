@@ -24,7 +24,9 @@ public final class AppointmentProjectionMapper {
             appointment.sourceEventId(),
             appointment.idempotencyKey(),
             appointment.createdAt(),
-            appointment.updatedAt()
+            appointment.updatedAt(),
+            appointment.fullname(),
+            appointment.email()
         );
     }
 
@@ -38,7 +40,9 @@ public final class AppointmentProjectionMapper {
             document.getSourceEventId(),
             document.getIdempotencyKey(),
             document.getCreatedAt(),
-            document.getUpdatedAt()
+            document.getUpdatedAt(),
+            document.getFullname(),
+            document.getEmail()
         );
     }
 

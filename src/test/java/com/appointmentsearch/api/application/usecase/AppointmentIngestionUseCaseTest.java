@@ -33,7 +33,9 @@ class AppointmentIngestionUseCaseTest {
             AppointmentStatus.SCHEDULED,
             "event-1",
             "idempotency-1",
-            null
+            Instant.now(),
+            "Dr. John Doe",
+            "john.doe@example.com"
         );
 
         final ScheduledAppointment domain = new ScheduledAppointment(
@@ -45,7 +47,9 @@ class AppointmentIngestionUseCaseTest {
             event.eventId(),
             event.idempotencyKey(),
             Instant.now(),
-            Instant.now()
+            Instant.now(),
+            event.fullname(),
+            event.email()
         );
         when(mapper.toDomain(event, "idempotency-1")).thenReturn(domain);
 

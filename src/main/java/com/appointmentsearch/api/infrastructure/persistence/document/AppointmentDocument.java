@@ -34,6 +34,8 @@ public class AppointmentDocument {
     private String idempotencyKey;
     private Instant createdAt;
     private Instant updatedAt;
+    private String fullname;
+    private String email;
 
     public AppointmentDocument() {
     }
@@ -48,7 +50,9 @@ public class AppointmentDocument {
         final String sourceEventId,
         final String idempotencyKey,
         final Instant createdAt,
-        final Instant updatedAt
+        final Instant updatedAt,
+        final String fullname,
+        final String email
     ) {
         this.id = id;
         this.appointmentId = appointmentId;
@@ -60,6 +64,8 @@ public class AppointmentDocument {
         this.idempotencyKey = idempotencyKey;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.fullname = fullname;
+        this.email = email;
     }
 
     public String getId() {
@@ -100,5 +106,13 @@ public class AppointmentDocument {
 
     public Instant getUpdatedAt() {
         return updatedAt;
+    }
+
+    public String getFullname() {
+        return fullname;
+    }
+
+    public String getEmail() {
+        return email;
     }
 }

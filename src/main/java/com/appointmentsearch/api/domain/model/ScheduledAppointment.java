@@ -13,7 +13,9 @@ public record ScheduledAppointment(
     String sourceEventId,
     String idempotencyKey,
     Instant createdAt,
-    Instant updatedAt
+    Instant updatedAt,
+    String fullname,
+    String email
 ) {
     public ScheduledAppointment {
         status = status == null ? AppointmentStatus.SCHEDULED : status;

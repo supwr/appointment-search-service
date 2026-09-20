@@ -20,7 +20,9 @@ public class AppointmentMessageMapper {
             event.eventId(),
             idempotencyKey,
             now,
-            now
+            now,
+            event.fullname(),
+            event.email()
         );
     }
 

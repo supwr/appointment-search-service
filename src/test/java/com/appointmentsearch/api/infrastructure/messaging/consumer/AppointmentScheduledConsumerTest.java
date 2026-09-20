@@ -31,7 +31,9 @@ class AppointmentScheduledConsumerTest {
               "doctorId": "4d1c9baf-da93-4b36-ba45-555beef6badd",
               "appointmentDateTime": "2026-09-07 21:51:22.785 +0000",
               "eventId": "event-99",
-              "idempotencyKey": "idempotency-99"
+              "idempotencyKey": "idempotency-99",
+              "fullname": "Dr. John Doe",
+              "email": "john.doe@example.com"
             }
             """;
         final ConsumerRecord<String, String> record = new ConsumerRecord<>(
@@ -48,6 +50,8 @@ class AppointmentScheduledConsumerTest {
         verify(useCase, times(1)).execute(captor.capture());
         assertEquals("event-99", captor.getValue().eventId());
         assertEquals("idempotency-99", captor.getValue().idempotencyKey());
+        assertEquals("Dr. John Doe", captor.getValue().fullname());
+        assertEquals("john.doe@example.com", captor.getValue().email());
     }
 
     @Test

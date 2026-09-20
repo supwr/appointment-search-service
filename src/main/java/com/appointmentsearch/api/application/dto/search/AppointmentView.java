@@ -15,6 +15,8 @@ public record AppointmentView(
     String sourceEventId,
     String idempotencyKey,
     Instant createdAt,
-    Instant updatedAt
+    Instant updatedAt,
+    String fullname,
+    String email
 ) {
 }
