@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Profile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.RetryableTopic;
+import org.springframework.kafka.retrytopic.SameIntervalTopicReuseStrategy;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -36,6 +38,12 @@ public class AppointmentScheduledConsumer {
         this.appointmentGateway = appointmentGateway;
     }
 
+    @RetryableTopic(
+        attempts = "${app.kafka.retry.attempts}",
+        retryTopicSuffix = "${app.kafka.retry.retry-topic-suffix}",
+        dltTopicSuffix = "${app.kafka.retry.dlq-topic-suffix}",
+        sameIntervalTopicReuseStrategy = SameIntervalTopicReuseStrategy.SINGLE_TOPIC
+    )
     @KafkaListener(topics = "${app.kafka.topics.appointment-scheduled}", groupId = "${spring.kafka.consumer.group-id}")
     public void listen(final ConsumerRecord<String, String> record) throws IOException {
         final AppointmentScheduledEvent event = objectMapper.readValue(record.value(), AppointmentScheduledEvent.class);

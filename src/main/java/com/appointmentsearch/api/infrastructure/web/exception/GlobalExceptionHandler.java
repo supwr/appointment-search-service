@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 
 import java.net.URI;
 import java.time.Instant;
@@ -31,6 +32,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ProblemDetail handleIllegalArgument(final IllegalArgumentException ex, final WebRequest request) {
         return buildProblem(HttpStatus.BAD_REQUEST, "Bad Request", "bad-request", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(RequestNotPermitted.class)
+    public ProblemDetail handleRequestNotPermitted(final RequestNotPermitted ex, final WebRequest request) {
+        return buildProblem(HttpStatus.TOO_MANY_REQUESTS, "Too Many Requests", "rate-limit-exceeded", "Rate limit exceeded", request);
     }
 
     @ExceptionHandler(Exception.class)

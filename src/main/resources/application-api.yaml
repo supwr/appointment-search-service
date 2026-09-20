@@ -6,3 +6,11 @@ spring:
     web-application-type: servlet
   graphql:
     path: /graphql
+
+resilience4j:
+  ratelimiter:
+    instances:
+      appointmentLimiter:
+        limitRefreshPeriod: 1s
+        limitForPeriod: 5
+        timeoutDuration: 0s
