@@ -1,12 +1,10 @@
 package com.appointmentsearch.api.infrastructure.persistence.document;
 
-import com.appointmentsearch.api.domain.model.AppointmentStatus;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Document("appointments")
@@ -25,10 +23,7 @@ public class AppointmentDocument {
     private UUID doctorId;
 
     @Indexed
-    private OffsetDateTime appointmentDateTime;
-
-    @Indexed
-    private AppointmentStatus status;
+    private Instant appointmentDateTime;
 
     private String sourceEventId;
     private String idempotencyKey;
@@ -45,8 +40,7 @@ public class AppointmentDocument {
         final UUID appointmentId,
         final UUID patientId,
         final UUID doctorId,
-        final OffsetDateTime appointmentDateTime,
-        final AppointmentStatus status,
+        final Instant appointmentDateTime,
         final String sourceEventId,
         final String idempotencyKey,
         final Instant createdAt,
@@ -59,7 +53,6 @@ public class AppointmentDocument {
         this.patientId = patientId;
         this.doctorId = doctorId;
         this.appointmentDateTime = appointmentDateTime;
-        this.status = status;
         this.sourceEventId = sourceEventId;
         this.idempotencyKey = idempotencyKey;
         this.createdAt = createdAt;
@@ -84,12 +77,8 @@ public class AppointmentDocument {
         return doctorId;
     }
 
-    public OffsetDateTime getAppointmentDateTime() {
+    public Instant getAppointmentDateTime() {
         return appointmentDateTime;
-    }
-
-    public AppointmentStatus getStatus() {
-        return status;
     }
 
     public String getSourceEventId() {

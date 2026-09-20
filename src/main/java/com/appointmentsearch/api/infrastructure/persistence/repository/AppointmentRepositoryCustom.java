@@ -1,7 +1,6 @@
 package com.appointmentsearch.api.infrastructure.persistence.repository;
 
 import com.appointmentsearch.api.infrastructure.persistence.document.AppointmentDocument;
-import com.appointmentsearch.api.domain.model.AppointmentStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -13,7 +12,6 @@ public interface AppointmentRepositoryCustom {
         UUID patientId,
         OffsetDateTime from,
         OffsetDateTime to,
-        AppointmentStatus status,
         Pageable pageable
     );
 }

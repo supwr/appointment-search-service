@@ -51,7 +51,6 @@ public class MongoAppointmentGateway implements AppointmentGateway {
                 patientId,
                 filter.from(),
                 filter.to(),
-                filter.status(),
                 pageable
             )
         );

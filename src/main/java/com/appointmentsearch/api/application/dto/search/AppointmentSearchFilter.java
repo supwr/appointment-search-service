@@ -1,13 +1,10 @@
 package com.appointmentsearch.api.application.dto.search;
 
-import com.appointmentsearch.api.domain.model.AppointmentStatus;
-
 import java.time.OffsetDateTime;
 
 public record AppointmentSearchFilter(
     OffsetDateTime from,
     OffsetDateTime to,
-    AppointmentStatus status,
     Integer page,
     Integer size
 ) {
@@ -21,6 +18,6 @@ public record AppointmentSearchFilter(
     }
 
     public static AppointmentSearchFilter empty() {
-        return new AppointmentSearchFilter(null, null, null, DEFAULT_PAGE, DEFAULT_SIZE);
+        return new AppointmentSearchFilter(null, null, DEFAULT_PAGE, DEFAULT_SIZE);
     }
 }

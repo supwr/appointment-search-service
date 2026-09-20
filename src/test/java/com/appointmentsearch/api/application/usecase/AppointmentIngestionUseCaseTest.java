@@ -4,7 +4,6 @@ import com.appointmentsearch.api.application.dto.event.AppointmentEventType;
 import com.appointmentsearch.api.application.dto.event.AppointmentScheduledEvent;
 import com.appointmentsearch.api.application.gateway.AppointmentGateway;
 import com.appointmentsearch.api.application.usecase.create.CreateAppointmentUseCase;
-import com.appointmentsearch.api.domain.model.AppointmentStatus;
 import com.appointmentsearch.api.domain.model.ScheduledAppointment;
 import com.appointmentsearch.api.infrastructure.messaging.mapper.AppointmentMessageMapper;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,7 @@ class AppointmentIngestionUseCaseTest {
         final AppointmentGateway gateway = mock(AppointmentGateway.class);
         final AppointmentMessageMapper mapper = mock(AppointmentMessageMapper.class);
         final CreateAppointmentUseCase useCase = new CreateAppointmentUseCase(gateway, mapper);
-        final AppointmentScheduledEvent event = buildEvent(AppointmentEventType.SCHEDULED, AppointmentStatus.SCHEDULED);
+        final AppointmentScheduledEvent event = buildEvent(AppointmentEventType.SCHEDULED);
         final ScheduledAppointment domain = buildDomain(event);
         when(mapper.toDomain(event, "idempotency-1")).thenReturn(domain);
 
@@ -40,7 +39,7 @@ class AppointmentIngestionUseCaseTest {
         final AppointmentGateway gateway = mock(AppointmentGateway.class);
         final AppointmentMessageMapper mapper = mock(AppointmentMessageMapper.class);
         final CreateAppointmentUseCase useCase = new CreateAppointmentUseCase(gateway, mapper);
-        final AppointmentScheduledEvent event = buildEvent(AppointmentEventType.UPDATED, AppointmentStatus.CONFIRMED);
+        final AppointmentScheduledEvent event = buildEvent(AppointmentEventType.UPDATED);
         final ScheduledAppointment domain = buildDomain(event);
         when(mapper.toDomain(event, "idempotency-1")).thenReturn(domain);
 
@@ -55,7 +54,7 @@ class AppointmentIngestionUseCaseTest {
         final AppointmentGateway gateway = mock(AppointmentGateway.class);
         final AppointmentMessageMapper mapper = mock(AppointmentMessageMapper.class);
         final CreateAppointmentUseCase useCase = new CreateAppointmentUseCase(gateway, mapper);
-        final AppointmentScheduledEvent event = buildEvent(AppointmentEventType.DELETED, AppointmentStatus.CANCELED);
+        final AppointmentScheduledEvent event = buildEvent(AppointmentEventType.DELETED);
 
         useCase.execute(event);
 
@@ -64,8 +63,7 @@ class AppointmentIngestionUseCaseTest {
     }
 
     private AppointmentScheduledEvent buildEvent(
-        final AppointmentEventType type,
-        final AppointmentStatus status
+        final AppointmentEventType type
     ) {
         return new AppointmentScheduledEvent(
             type,
@@ -73,10 +71,8 @@ class AppointmentIngestionUseCaseTest {
             UUID.randomUUID(),
             UUID.randomUUID(),
             OffsetDateTime.parse("2026-09-07T10:15:30-03:00"),
-            status,
             "event-1",
             "idempotency-1",
-            Instant.now(),
             "Dr. John Doe",
             "john.doe@example.com"
         );
@@ -88,7 +84,6 @@ class AppointmentIngestionUseCaseTest {
             event.patientId(),
             event.doctorId(),
             event.appointmentDateTime(),
-            event.status(),
             event.eventId(),
             event.idempotencyKey(),
             Instant.now(),

@@ -16,7 +16,6 @@ public class AppointmentMessageMapper {
             event.patientId(),
             event.doctorId(),
             event.appointmentDateTime(),
-            event.status(),
             event.eventId(),
             idempotencyKey,
             now,

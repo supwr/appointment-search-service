@@ -1,7 +1,6 @@
 package com.appointmentsearch.api.infrastructure.persistence.repository;
 
 import com.appointmentsearch.api.infrastructure.persistence.document.AppointmentDocument;
-import com.appointmentsearch.api.domain.model.AppointmentStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -29,19 +28,15 @@ public class AppointmentRepositoryImpl implements AppointmentRepositoryCustom {
         final UUID patientId,
         final OffsetDateTime from,
         final OffsetDateTime to,
-        final AppointmentStatus status,
         final Pageable pageable
     ) {
         final List<Criteria> criteria = new ArrayList<>();
         criteria.add(Criteria.where("patientId").is(patientId));
         if (from != null) {
-            criteria.add(Criteria.where("appointmentDateTime").gte(from));
+            criteria.add(Criteria.where("appointmentDateTime").gte(from.toInstant()));
         }
         if (to != null) {
-            criteria.add(Criteria.where("appointmentDateTime").lte(to));
-        }
-        if (status != null) {
-            criteria.add(Criteria.where("status").is(status));
+            criteria.add(Criteria.where("appointmentDateTime").lte(to.toInstant()));
         }
 
         final Query countQuery = buildQuery(criteria);

@@ -1,21 +1,11 @@
 scalar DateTime
 scalar Long
 
-enum AppointmentStatus {
-  SCHEDULED
-  CONFIRMED
-  CANCELLED
-  COMPLETED
-  NO_SHOW
-}
-
 type Appointment {
   appointmentId: ID!
   patientId: ID!
   doctorId: ID!
   appointmentDateTime: DateTime!
-  status: AppointmentStatus!
-  sourceEventId: String
   idempotencyKey: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -33,7 +23,6 @@ type AppointmentPage {
 input AppointmentSearchFilter {
   from: DateTime
   to: DateTime
-  status: AppointmentStatus
   page: Int = 0
   size: Int = 20
 }

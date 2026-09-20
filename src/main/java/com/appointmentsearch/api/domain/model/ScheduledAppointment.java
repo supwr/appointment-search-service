@@ -9,7 +9,6 @@ public record ScheduledAppointment(
     UUID patientId,
     UUID doctorId,
     OffsetDateTime appointmentDateTime,
-    AppointmentStatus status,
     String sourceEventId,
     String idempotencyKey,
     Instant createdAt,
@@ -17,7 +16,4 @@ public record ScheduledAppointment(
     String fullname,
     String email
 ) {
-    public ScheduledAppointment {
-        status = status == null ? AppointmentStatus.SCHEDULED : status;
-    }
 }

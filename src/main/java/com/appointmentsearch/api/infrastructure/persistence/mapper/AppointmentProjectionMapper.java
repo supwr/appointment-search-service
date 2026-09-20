@@ -6,6 +6,8 @@ import com.appointmentsearch.api.domain.model.ScheduledAppointment;
 import com.appointmentsearch.api.infrastructure.persistence.document.AppointmentDocument;
 import org.springframework.data.domain.Page;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 public final class AppointmentProjectionMapper {
@@ -19,8 +21,7 @@ public final class AppointmentProjectionMapper {
             appointment.appointmentId(),
             appointment.patientId(),
             appointment.doctorId(),
-            appointment.appointmentDateTime(),
-            appointment.status(),
+            appointment.appointmentDateTime().toInstant(),
             appointment.sourceEventId(),
             appointment.idempotencyKey(),
             appointment.createdAt(),
@@ -35,8 +36,7 @@ public final class AppointmentProjectionMapper {
             document.getAppointmentId(),
             document.getPatientId(),
             document.getDoctorId(),
-            document.getAppointmentDateTime(),
-            document.getStatus(),
+            OffsetDateTime.ofInstant(document.getAppointmentDateTime(), ZoneOffset.UTC),
             document.getSourceEventId(),
             document.getIdempotencyKey(),
             document.getCreatedAt(),

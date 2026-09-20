@@ -68,10 +68,8 @@ public class AppointmentScheduledConsumer {
             event.patientId(),
             event.doctorId(),
             event.appointmentDateTime(),
-            event.status(),
             event.eventId(),
             headerIdempotencyKey,
-            event.occurredAt(),
             event.fullname(),
             event.email()
         );
