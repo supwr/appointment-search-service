@@ -51,6 +51,10 @@ Essa separacao reduz acoplamento operacional e permite escalar leitura e ingesta
 
 ![clean_arch.png](docs/clean-arch.png)
 
+## Cobertura de testes
+
+![test-coverage.png](docs/test-coverage.png)
+
 ## Contrato GraphQL
 
 O schema fica em `src/main/resources/graphql/schema.graphqls` e define:
@@ -69,6 +73,15 @@ Scalars utilizados:
 
 - `DateTime`
 - `Long`
+
+## Sessao de Kafka
+
+| Topico | Consumer/Producer | Consumer group |
+| --- | --- | --- |
+| `scheduling.appointment.notification` | Consumer | `notification-service` |
+| `scheduling.appointment.notification-retry` | Producer/Consumer | `notification-service` |
+| `scheduling.appointment.notification-dlq` | Producer | `notification-service` |
+
 
 ## Seguranca e acesso
 
